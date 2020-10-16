@@ -1,6 +1,6 @@
 {
   "name": "arubaos",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Superagent utilities for interacting with the ArubaOS REST API",
   "main": "lib",
   "scripts": {
