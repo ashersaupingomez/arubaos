@@ -4,7 +4,8 @@
   "description": "Superagent utilities for interacting with the ArubaOS REST API",
   "main": "lib",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "docs:build": "documentation readme lib --section=API",
+    "test": "node test"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
     "superagent-prefix": "0.0.2"
   },
   "devDependencies": {
+    "baretest": "^2.0.0",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0"
