@@ -1,26 +1,35 @@
 const baretest = require('baretest');
 const assert = require('assert');
+const { agent, Response } = require('superagent');
 
-const { createClient, useClient } = require('./lib');
 const { name } = require('./package');
+const {
+  createClient,
+  loginClient,
+  logoutClient,
+  useClient,
+} = require('./lib');
 
 const test = baretest(name);
 
-function getNodeHierarchy(client) {
+function getAPDatabase(client) {
   return client
-    .get('/configuration/object/node_hierarchy');
+    .get('/configuration/showcommand')
+    .query({ command: 'show ap database' })
+    .then(({ body }) => body['AP Database']);
 }
 
 const client = createClient();
 
-test('login, execute a function, then logout', async () => {
-  const { ok } = await useClient(client, getNodeHierarchy);
+test('createClient', () => assert(client instanceof agent));
 
-  assert.ok(ok);
-});
+test('loginClient', () => loginClient(client)
+  .then((response) => assert(response instanceof Response)));
 
-test('fails to execute a function after logout', () => {
-  assert.rejects(() => getNodeHierarchy(client));
-});
+test('logoutClient', () => logoutClient(client)
+  .then((response) => assert(response instanceof Response)));
+
+test('useClient', () => useClient(client, getAPDatabase)
+  .then((apDatabase) => assert(Array.isArray(apDatabase))));
 
 test.run();

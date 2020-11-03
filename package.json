@@ -1,6 +1,6 @@
 {
   "name": "arubaos",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "Superagent utilities for interacting with the ArubaOS REST API",
   "main": "lib",
   "scripts": {
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "baretest": "^2.0.0",
+    "dotenv": "^8.2.0",
     "eslint": "^7.9.0",
     "eslint-config-airbnb-base": "^14.2.0",
     "eslint-plugin-import": "^2.22.0"

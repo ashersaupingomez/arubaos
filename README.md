@@ -3,18 +3,27 @@
 Superagent utilities for interacting with the ArubaOS REST API
 
 ## Features
+
 -   Tested & working on ArubaOS REST API version v1.
 -   Based on [superagent.Agent](https://visionmedia.github.io/superagent/#agents-for-global-state), a simple & robust http client class with in-built cookie handling.
 -   Simple & flexible API with minimal moving parts.
 -   Able to work with environment variables.
 -   Super-lightweight package.
 
+```javascript
+const { createClient, useClient } = require('arubaos');
+
+const getAPDatabase = require('./getAPDatabase');
+
+const apDatabase = await useClient(createClient(), getAPDatabase);
+```
+
 ## Testing
 
-Tests are performed on a defined ArubaOS controller. Include the `ARUBA_OS_HOST` environment variable, at minimum, along with any other of the mentioned environment variables.
+Tests are performed on an actual ArubaOS controller whose credentials are defined by environment variables.
 
 ```bash
-ARUBA_OS_HOST=10.11.12.13 npm test
+$ ARUBA_OS_HOST=10.11.12.13 npm test
 ```
 
 ## API
@@ -26,10 +35,10 @@ ARUBA_OS_HOST=10.11.12.13 npm test
 -   [createClient](#createclient)
     -   [Parameters](#parameters)
     -   [Examples](#examples)
--   [login](#login)
+-   [loginClient](#loginclient)
     -   [Parameters](#parameters-1)
     -   [Examples](#examples-1)
--   [logout](#logout)
+-   [logoutClient](#logoutclient)
     -   [Parameters](#parameters-2)
     -   [Examples](#examples-2)
 -   [useClient](#useclient)
@@ -38,93 +47,98 @@ ARUBA_OS_HOST=10.11.12.13 npm test
 
 ### createClient
 
-Create a client.
-
 #### Parameters
 
--   `host` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Controller IP address (optional, default `process.env.ARUBA_OS_HOST`)
--   `version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Controller API version (optional, default `process.env.ARUBA_OS_VERSION||'v1'`)
+-   `host` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** IP address of controller (optional, default `process.env.ARUBA_OS_HOST`)
+-   `version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** API version of ArubaOS REST API (optional, default `process.env.ARUBA_OS_VERSION||'v1'`)
 
 #### Examples
 
 ```javascript
-const { createClient } = require('arubaos');
-
-const client = createClient('10.11.12.13');
-
-...
+const client = createClient('10.11.12.13', 'v1');
 ```
 
-Returns **any** superagent.Agent
+Returns **superagent.agent** ArubaOS REST API client with TLS checks ignored
 
-### login
+### loginClient
 
-Login a client
+Note: must be performed before any requests
 
 #### Parameters
 
--   `client` **superagent.Agent** 
--   `username` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `process.env.ARUBA_OS_USERNAME||'admin'`)
--   `password` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `process.env.ARUBA_OS_PASSWORD||''`)
+-   `client` **superagent.agent** ArubaOS REST API client
+-   `username` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Username of controller user (optional, default `process.env.ARUBA_OS_USERNAME||'admin'`)
+-   `password` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Password of controller user (optional, default `process.env.ARUBA_OS_PASSWORD||''`)
 
 #### Examples
 
 ```javascript
-const { createClient, login } = require('arubaos');
-
-const client = createClient('10.11.12.13');
-
-await login(client);
-
-...
+await loginClient(client, 'rick', 'wubba lubba dub-dub');
 ```
 
-### logout
+Returns **superagent.Request** Login request for ArubaOS REST API
 
-Logout a client.
+### logoutClient
+
+Note: must be performed after requests
 
 #### Parameters
 
--   `client` **superagent.Agent** 
+-   `client` **superagent.agent** ArubaOS REST API client
 
 #### Examples
 
 ```javascript
-const { createClient, login, logout } = require('arubaos');
-
-const client = createClient('10.11.12.13');
-
-await login(client);
-
-...
-
-await logout(client);
+await logoutClient(client);
 ```
+
+Returns **superagent.Request** Logout request for the ArubaOS REST API
 
 ### useClient
 
-Login a client, execute a function on the client, then logout the client.
+Login a client, execute a function using the client, then logout the client,
+returning the value of the function.
+
+This is a simpler method than explicitly using `loginClient` & `logoutClient`,
+which is the typical workflow.
 
 #### Parameters
 
--   `client` **superagent.Agent** 
--   `fn` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** 
--   `username` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `process.env.ARUBA_OS_USERNAME||'admin'`)
--   `password` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**  (optional, default `process.env.ARUBA_OS_PASSWORD||''`)
+-   `client` **superagent.agent** ArubaOS REST API client
+-   `fn` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** Function which only accepts a `client` parameter
+-   `username` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Username of controller user (optional, default `process.env.ARUBA_OS_USERNAME||'admin'`)
+-   `password` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Password of controller user (optional, default `process.env.ARUBA_OS_PASSWORD||''`)
 
 #### Examples
 
+Define a function:
+
+
 ```javascript
-const { createClient, useClient } = require('arubaos');
-
-function getNodeHierarchy(client) {
+function getAPDatabase(client) {
   return client
-    .get('/configuration/object/node_hierarchy');
+    .get('/configuration/showcommand')
+    .query({ command: 'show ap database long' })
+    .then(({ body }) => body['AP Database']);
 }
-
-useClient(createClient('10.11.12.13'), getNodeHierarchy)
- .then(console.log)
- .catch(console.error);
 ```
 
-Returns **any** The return value of `fn`
+Pass `client` & the function into `useClient`:
+
+
+```javascript
+const apDatabase = await useClient(client, getAPDatabase, 'rick', 'wubba lubba dub-dub');
+```
+
+This is equivalent to:
+
+
+```javascript
+await loginClient(client, 'rick', 'wubba lubba dub-dub');
+
+const apDatabase = await getAPDatabase(client);
+
+await logoutClient(client);
+```
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;any>** Return value of `fn`
