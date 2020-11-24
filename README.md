@@ -10,20 +10,20 @@ Superagent utilities for interacting with the ArubaOS REST API
 -   Able to work with environment variables.
 -   Super-lightweight package.
 
+## Getting Started
+
 ```javascript
-const { createClient, useClient } = require('arubaos');
+const { useClient } = require('arubaos');
 
-const getAPDatabase = require('./getAPDatabase');
+function requestGetHostname(client) {
+  return client
+    .query({ command: 'show hostname' })
+    .get('/configuration/showcommand');
+}
 
-const apDatabase = await useClient(createClient(), getAPDatabase);
-```
-
-## Testing
-
-Tests are performed on an actual ArubaOS controller whose credentials are defined by environment variables.
-
-```bash
-$ ARUBA_OS_HOST=10.11.12.13 npm test
+useClient(requestGetHostname)
+  .then(console.log)
+  .catch(console.error);
 ```
 
 ## API
@@ -35,110 +35,72 @@ $ ARUBA_OS_HOST=10.11.12.13 npm test
 -   [createClient](#createclient)
     -   [Parameters](#parameters)
     -   [Examples](#examples)
--   [loginClient](#loginclient)
+-   [useClient](#useclient)
     -   [Parameters](#parameters-1)
     -   [Examples](#examples-1)
--   [logoutClient](#logoutclient)
-    -   [Parameters](#parameters-2)
-    -   [Examples](#examples-2)
--   [useClient](#useclient)
-    -   [Parameters](#parameters-3)
-    -   [Examples](#examples-3)
 
 ### createClient
 
+Request URLs are prepended with the appropriate URL base,
+so only REST API endpoints are required.
+
 #### Parameters
 
--   `host` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** IP address of controller (optional, default `process.env.ARUBA_OS_HOST`)
--   `version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** API version of ArubaOS REST API (optional, default `process.env.ARUBA_OS_VERSION||'v1'`)
+-   `host` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** Controller IP address (typically) (optional, default `process.env.ARUBA_OS_HOST`)
+-   `version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** ArubaOS REST API version (optional, default `process.env.ARUBA_OS_VERSION||'v1'`)
 
 #### Examples
 
 ```javascript
-const client = createClient('10.11.12.13', 'v1');
+const client = createClient();
 ```
 
-Returns **superagent.agent** ArubaOS REST API client with TLS checks ignored
+If certs hasn't been configured on the controller
 
-### loginClient
-
-Note: must be performed before any requests
-
-#### Parameters
-
--   `client` **superagent.agent** ArubaOS REST API client
--   `username` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Username of controller user (optional, default `process.env.ARUBA_OS_USERNAME||'admin'`)
--   `password` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Password of controller user (optional, default `process.env.ARUBA_OS_PASSWORD||''`)
-
-#### Examples
 
 ```javascript
-await loginClient(client, 'rick', 'wubba lubba dub-dub');
+const client = createClient()
+  .disableTLSCerts();
 ```
 
-Returns **superagent.Request** Login request for ArubaOS REST API
-
-### logoutClient
-
-Note: must be performed after requests
-
-#### Parameters
-
--   `client` **superagent.agent** ArubaOS REST API client
-
-#### Examples
-
-```javascript
-await logoutClient(client);
-```
-
-Returns **superagent.Request** Logout request for the ArubaOS REST API
+Returns **any** ArubaOS REST API client
 
 ### useClient
 
-Login a client, execute a function using the client, then logout the client,
-returning the value of the function.
-
-This is a simpler method than explicitly using `loginClient` & `logoutClient`,
-which is the typical workflow.
-
 #### Parameters
 
--   `client` **superagent.agent** ArubaOS REST API client
--   `fn` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** Function which only accepts a `client` parameter
--   `username` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Username of controller user (optional, default `process.env.ARUBA_OS_USERNAME||'admin'`)
--   `password` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Password of controller user (optional, default `process.env.ARUBA_OS_PASSWORD||''`)
+-   `fn` **function (client: any): any** Function whose only parameter is `client`
+-   `client` **any** ArubaOS REST API client (optional, default `createClient()`)
+-   `username` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Controller username (optional, default `process.env.ARUBA_OS_USERNAME||'admin'`)
+-   `password` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Controller password (optional, default `process.env.ARUBA_OS_PASSWORD||''`)
 
 #### Examples
 
-Define a function:
+First, define a function which accepts & uses the `client` paramter
 
 
 ```javascript
-function getAPDatabase(client) {
+function requestGetHostname(client) {
   return client
-    .get('/configuration/showcommand')
-    .query({ command: 'show ap database long' })
-    .then(({ body }) => body['AP Database']);
+    .query({ command: 'show hostname' })
+    .get('/configuration/showcommand');
 }
 ```
 
-Pass `client` & the function into `useClient`:
+Then, use the `useClient` function which returns the resolved value of `fn`
 
 
 ```javascript
-const apDatabase = await useClient(client, getAPDatabase, 'rick', 'wubba lubba dub-dub');
+const response = await useClient(requestGetHostname);
 ```
 
-This is equivalent to:
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;any>** Promise that resolves to the return value of `fn`
 
+## Testing
 
-```javascript
-await loginClient(client, 'rick', 'wubba lubba dub-dub');
+Tests are performed on an actual ArubaOS controller whose credentials are defined by environment variables.
+These can be fed either via the command line or a `.env` file at the root of this package.
 
-const apDatabase = await getAPDatabase(client);
-
-await logoutClient(client);
+```bash
+$ npm test
 ```
-
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)&lt;any>** Return value of `fn`
