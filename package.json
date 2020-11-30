@@ -9,7 +9,7 @@
     "build": "tsc --outDir dist/cjs && tsc --outDir dist/esm --module es2020",
     "docs:build": "documentation readme src --section=API --parse-extension=ts",
     "prepare": "npm run clean && npm run build && npm run docs:build",
-    "test": "npm run prepare && node -r dotenv/config dist/useClient.test"
+    "test": "npm run prepare && node -r dotenv/config dist/esm/useClient.test"
   },
   "repository": {
     "type": "git",
