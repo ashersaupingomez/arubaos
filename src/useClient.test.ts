@@ -5,7 +5,6 @@ import type { Request, Response, SuperAgentStatic } from 'superagent';
 
 import createClient from './createClient';
 import useClient from './useClient';
-import { create } from 'domain';
 
 const test = baretest('arubaos');
 

@@ -1,15 +1,18 @@
 {
   "name": "arubaos",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Superagent utilities for interacting with the ArubaOS REST API",
   "main": "dist/cjs",
   "module": "dist/esm",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "tsc --outDir dist/cjs && tsc --outDir dist/esm --module es2020",
-    "docs:build": "documentation readme src --section=API --parse-extension=ts",
-    "prepare": "npm run clean && npm run build && npm run docs:build",
-    "test": "npm run prepare && node -r dotenv/config dist/esm/useClient.test"
+    "build:docs": "documentation readme src --section=API --parse-extension=ts",
+    "build:cjs": "tsc --outDir dist/cjs",
+    "build:esm": "tsc --outDir dist/esm --module es2020",
+    "build": "npm run build:cjs && npm run build:esm",
+    "clean-build": "npm run clean && npm run build",
+    "prepare": "npm run clean-build && npm run build:docs",
+    "test": "npm run clean-build && node dist/cjs/useClient.test"
   },
   "repository": {
     "type": "git",
