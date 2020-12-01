@@ -14,3 +14,6 @@
 - Changed: Improved npm scripts
 - Changed: `docs:build` to `build:docs` script
 - Removed: Unnessary `const { create } = require('domain');` from test script
+
+# 3.0.2
+- Added: non-null assertion to `host` parameter in `createClient`

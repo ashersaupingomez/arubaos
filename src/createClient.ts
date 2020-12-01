@@ -15,7 +15,7 @@ import type { Request, SuperAgentStatic } from 'superagent';
  *   .disableTLSCerts();
  */
 export default function createClient(
-  host: string | undefined = process.env.ARUBA_OS_HOST,
+  host: string = process.env.ARUBA_OS_HOST!,
   version: string = process.env.ARUBA_OS_VERSION || 'v1',
 ): SuperAgentStatic & Request {
   return agent()
