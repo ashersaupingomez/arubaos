@@ -46,7 +46,7 @@ so only REST API endpoints are required.
 
 #### Parameters
 
--   `host` **([string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String) \| [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** Controller IP address (typically) (optional, default `process.env.ARUBA_OS_HOST`)
+-   `host` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Controller IP address (typically) (optional, default `process.env.ARUBA_OS_HOST!`)
 -   `version` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** ArubaOS REST API version (optional, default `process.env.ARUBA_OS_VERSION||'v1'`)
 
 #### Examples

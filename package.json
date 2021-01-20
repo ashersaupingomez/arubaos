@@ -1,6 +1,6 @@
 {
   "name": "arubaos",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Superagent utilities for interacting with the ArubaOS REST API",
   "main": "dist/cjs",
   "module": "dist/esm",
@@ -30,10 +30,10 @@
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
     "@types/baretest": "^2.0.0",
-    "@types/node": "^14.14.10",
+    "@types/node": "^14.14.22",
     "@types/superagent": "^4.1.10",
-    "@typescript-eslint/eslint-plugin": "^4.8.2",
-    "@typescript-eslint/parser": "^4.8.2",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
     "baretest": "^2.0.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.14.0",
