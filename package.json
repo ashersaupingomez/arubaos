@@ -6,12 +6,11 @@
   "module": "dist/esm",
   "scripts": {
     "clean": "rm -rf dist",
-    "build:docs": "documentation readme src --section=API --parse-extension=ts",
     "build:cjs": "tsc --outDir dist/cjs",
     "build:esm": "tsc --outDir dist/esm --module es2020",
     "build": "npm run build:cjs && npm run build:esm",
     "clean-build": "npm run clean && npm run build",
-    "prepare": "npm run clean-build && npm run build:docs",
+    "prepare": "npm run clean-build",
     "test": "npm run clean-build && node dist/cjs/useClient.test"
   },
   "repository": {
@@ -35,7 +34,7 @@
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
     "baretest": "^2.0.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^10.0.0",
     "eslint": "^7.14.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1",
