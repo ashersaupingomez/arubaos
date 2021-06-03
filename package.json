@@ -1,17 +1,11 @@
 {
   "name": "arubaos",
-  "version": "3.0.3",
+  "version": "4.0.0",
   "description": "Superagent utilities for interacting with the ArubaOS REST API",
-  "main": "dist/cjs",
-  "module": "dist/esm",
+  "module": "index",
+  "type": "module",
   "scripts": {
-    "clean": "rm -rf dist",
-    "build:cjs": "tsc --outDir dist/cjs",
-    "build:esm": "tsc --outDir dist/esm --module es2020",
-    "build": "npm run build:cjs && npm run build:esm",
-    "clean-build": "npm run clean && npm run build",
-    "prepare": "npm run clean-build",
-    "test": "npm run clean-build && node dist/cjs/useClient.test"
+    "test": "node test"
   },
   "repository": {
     "type": "git",
@@ -27,17 +21,9 @@
     "superagent": "^6.1.0"
   },
   "devDependencies": {
-    "@tsconfig/recommended": "^1.0.1",
-    "@types/baretest": "^2.0.0",
-    "@types/node": "^14.14.22",
-    "@types/superagent": "^4.1.10",
-    "@typescript-eslint/eslint-plugin": "^4.14.0",
-    "@typescript-eslint/parser": "^4.14.0",
     "baretest": "^2.0.0",
-    "dotenv": "^10.0.0",
-    "eslint": "^7.14.0",
+    "eslint": "^7.27.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
-    "typescript": "^4.1.2"
+    "eslint-plugin-import": "^2.23.4"
   }
 }

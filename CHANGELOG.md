@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.0
+- Changed: combine all code into one index.js file
+- Removed: Typescript, because it doesn't seem worth it
+
 ## 3.0.0
 - Added: typescript support
 - Added: this changelog
