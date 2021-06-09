@@ -1,5 +1,4 @@
 import { agent } from 'superagent';
-import { stringify } from 'querystring';
 
 const {
   ARUBA_OS_HOST,
@@ -29,9 +28,11 @@ export function loginClient({
   username = DEFAULT_USERNAME,
   password = DEFAULT_PASSWORD,
 }) {
+  const params = new URLSearchParams({ username, password });
+
   return client
     .post('/api/login')
-    .send(stringify({ username, password }))
+    .send(params.toString())
     // eslint-disable-next-line no-underscore-dangle
     .then(({ body }) => client.query({ UIDARUBA: body._global_result.UIDARUBA }));
 }
