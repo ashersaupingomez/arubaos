@@ -1,6 +1,6 @@
 {
   "name": "arubaos",
-  "version": "4.0.1",
+  "version": "4.0.3",
   "description": "Superagent utilities for interacting with the ArubaOS REST API",
   "main": "index.js",
   "type": "module",
