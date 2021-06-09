@@ -2,7 +2,7 @@
   "name": "arubaos",
   "version": "4.0.0",
   "description": "Superagent utilities for interacting with the ArubaOS REST API",
-  "module": "index",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "node test"
